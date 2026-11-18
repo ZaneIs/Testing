@@ -43,10 +43,8 @@ function run(Player)
 
 	local SelectPlayer = Player.Name
 
-getgenv().PositionPhysicsMultiply = 1
-getgenv().RotationPhysicsMultiply = 4
-local PositionPhysicsMultiply = getgenv().PositionPhysicsMultiply
-local RotationPhysicsMultiply = getgenv().RotationPhysicsMultiply
+	local PositionPhysicsMultiply = 1
+	local RotationPhysicsMultiply = 4
 
 
 	function Function.PartListDefault()	
@@ -3917,122 +3915,20 @@ end
 task.wait(1)
 run(Players.LocalPlayer)
 
--- Expose important tables
-getgenv().ClemonPlayerData = nil
+-- Expose the function so we can call it later
 getgenv().ClemonFunction = Function
 
 task.wait(1)
 run(Players.LocalPlayer)
 
--- Make PlayerData available after run starts
-task.spawn(function()
-	task.wait(0.5)
-	-- PlayerData is created inside run(), so we try to catch it
-	for i = 1, 20 do
-		if getgenv().ClemonPlayerData then break end
-		task.wait(0.1)
-	end
-end)
+-- Auto re-apply body on respawn
+local player = game.Players.LocalPlayer
 
---------------------------------------------------
--- Rayfield GUI (Integrated)
---------------------------------------------------
-task.spawn(function()
-	task.wait(2)
-
-	local success, Rayfield = pcall(function()
-		return loadstring(game:HttpGet("https://sirius.menu/gen2"))()
+player.CharacterAdded:Connect(function(character)
+	task.wait(0.8)
+	pcall(function()
+		if getgenv().ClemonFunction and getgenv().ClemonFunction.CharacterExecute then
+			getgenv().ClemonFunction.CharacterExecute(character, player.Name)
+		end
 	end)
-
-	if not success then
-		warn("Failed to load Rayfield")
-		return
-	end
-
-	local window = Rayfield:CreateWindow({
-		name = "Clemon Body",
-		subtitle = "Scales & Physics",
-		configuration = {
-			autoSave = true,
-			autoLoad = true,
-			fileName = "ClemonBodySettings"
-		}
-	})
-
-	local tab = window:CreateTab({ name = "Body" })
-	local player = game.Players.LocalPlayer
-
-	local function getData()
-		return getgenv().ClemonPlayerData and getgenv().ClemonPlayerData[player.Name]
-	end
-
-	local function refresh()
-		if getgenv().ClemonFunction and getgenv().ClemonFunction.CharacterExecute and player.Character then
-			getgenv().ClemonFunction.CharacterExecute(player.Character, player.Name)
-		end
-	end
-
-	tab:CreateSlider({
-		name = "Breasts Scale",
-		range = {0.2, 3},
-		increment = 0.05,
-		value = 1,
-		suffix = "x",
-		flag = "BreastsScale",
-		callback = function(value)
-			local data = getData()
-			if data then
-				data.BreastsScale = value
-				refresh()
-			end
-		end
-	})
-
-	tab:CreateSlider({
-		name = "Butts Scale",
-		range = {0.2, 3},
-		increment = 0.05,
-		value = 1,
-		suffix = "x",
-		flag = "ButtsScale",
-		callback = function(value)
-			local data = getData()
-			if data then
-				data.ButtsScale = value
-				refresh()
-			end
-		end
-	})
-
-	tab:CreateSlider({
-		name = "Physics Intensity",
-		range = {0, 3},
-		increment = 0.1,
-		value = 1,
-		suffix = "x",
-		flag = "PhysicsIntensity",
-		callback = function(value)
-			getgenv().PositionPhysicsMultiply = value
-			getgenv().RotationPhysicsMultiply = value * 4
-		end
-	})
-
-	tab:CreateToggle({
-		name = "UV Mode",
-		flag = "UVToggle",
-		callback = function(value)
-			local data = getData()
-			if data then
-				data.UVToggle = value
-				refresh()
-			end
-		end
-	})
-
-	tab:CreateButton({
-		name = "Force Refresh",
-		callback = refresh
-	})
-
-	print("✅ Clemon + Rayfield GUI loaded")
 end)
