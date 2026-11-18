@@ -2,35 +2,8 @@ local PartCreator = {}
 
 local Function = {}
 
-local HttpService = game:GetService("HttpService")
-local SAVE_FILE = "ClemonBodyScales.json"
-
-local function SaveScales()
-	local data = {
-		BreastsScale = getgenv().ClemonBreastsScale or 1,
-		ButtsScale = getgenv().ClemonButtsScale or 1
-	}
-	pcall(function()
-		writefile(SAVE_FILE, HttpService:JSONEncode(data))
-	end)
-end
-
-local function LoadScales()
-	if isfile(SAVE_FILE) then
-		local success, data = pcall(function()
-			return HttpService:JSONDecode(readfile(SAVE_FILE))
-		end)
-		if success and typeof(data) == "table" then
-			getgenv().ClemonBreastsScale = data.BreastsScale or 1
-			getgenv().ClemonButtsScale = data.ButtsScale or 1
-			return
-		end
-	end
-	getgenv().ClemonBreastsScale = 1
-	getgenv().ClemonButtsScale = 1
-end
-
-LoadScales()
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 
 
 function run(Player)
@@ -3855,30 +3828,20 @@ function run(Player)
 				Function.CharacterExecute(Player.Character, Player.Name)
 				warn("Toggled UV")
 			end
-if input.KeyCode == Enum.KeyCode.RightBracket then
-	PlayerData[Player.Name].BreastsScale = PlayerData[Player.Name].BreastsScale + 0.1
-	PlayerData[Player.Name].ButtsScale = PlayerData[Player.Name].ButtsScale + 0.1
-
-	getgenv().ClemonBreastsScale = PlayerData[Player.Name].BreastsScale
-	getgenv().ClemonButtsScale = PlayerData[Player.Name].ButtsScale
-	SaveScales()
-
-	warn("Breasts set to ".. PlayerData[Player.Name].BreastsScale)
-	warn("Butts set to ".. PlayerData[Player.Name].ButtsScale)
-	Function.CharacterExecute(Player.Character, Player.Name)
-end
-if input.KeyCode == Enum.KeyCode.LeftBracket then
-	PlayerData[Player.Name].BreastsScale = PlayerData[Player.Name].BreastsScale - 0.1
-	PlayerData[Player.Name].ButtsScale = PlayerData[Player.Name].ButtsScale - 0.1
-
-	getgenv().ClemonBreastsScale = PlayerData[Player.Name].BreastsScale
-	getgenv().ClemonButtsScale = PlayerData[Player.Name].ButtsScale
-	SaveScales()
-
-	warn("Breasts set to ".. PlayerData[Player.Name].BreastsScale)
-	warn("Butts set to ".. PlayerData[Player.Name].ButtsScale)
-	Function.CharacterExecute(Player.Character, Player.Name)
-end
+			if input.KeyCode == Enum.KeyCode.RightBracket then
+				PlayerData[Player.Name].BreastsScale = PlayerData[Player.Name].BreastsScale+ 0.1
+				warn("Breasts set to "..	PlayerData[Player.Name].BreastsScale)
+				PlayerData[Player.Name].ButtsScale = PlayerData[Player.Name].ButtsScale+ 0.1
+				warn("Butts set to "..	PlayerData[Player.Name].ButtsScale)
+				Function.CharacterExecute(Player.Character, Player.Name)
+			end
+			if input.KeyCode == Enum.KeyCode.LeftBracket then
+				PlayerData[Player.Name].BreastsScale = PlayerData[Player.Name].BreastsScale- 0.1
+				warn("Breasts set to "..	PlayerData[Player.Name].BreastsScale)
+				PlayerData[Player.Name].ButtsScale = PlayerData[Player.Name].ButtsScale- 0.1
+				warn("Butts set to "..	PlayerData[Player.Name].ButtsScale)
+				Function.CharacterExecute(Player.Character, Player.Name)
+			end
 			if input.KeyCode == Enum.KeyCode.B then
 				for i,v in pairs(Players:GetPlayers()) do
 					Function.CharacterExecute(v.Character,v.Name)
